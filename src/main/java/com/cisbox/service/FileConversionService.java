@@ -22,11 +22,9 @@ import un.unece.uncefact.data.standard.crossindustryinvoice._100.*;
 @Service
 public class FileConversionService {
 
-    private static final String OUTPUT_DIR = "src/main/resources/generated/cii/";
-    private static final String DISK_OUTPUT_DIR = "C:/output/generated/cii/";
+    private static final String DISK_OUTPUT_DIR = "C:/cisbox/output/ublcii/";
 
     public FileConversionService() {
-        new File(OUTPUT_DIR).mkdirs();
         new File(DISK_OUTPUT_DIR).mkdirs();
     }
 
@@ -78,21 +76,18 @@ public class FileConversionService {
 
                         // Generate file paths
                         String baseName = filePart.filename().replace(".xml", "");
-                        File projectFile = new File(OUTPUT_DIR + baseName + "-cii.xml");
                         File diskFile = new File(DISK_OUTPUT_DIR + baseName + "-cii.xml");
 
                         // Save files
-                        boolean savedProject = FileUtil.saveCIIFile(ciiInvoice, projectFile);
                         boolean savedDisk = FileUtil.saveCIIFile(ciiInvoice, diskFile);
 
-                        if (!savedProject || !savedDisk) {
+                        if (!savedDisk) {
                             return Mono.just(Map.of("error", "Failed to save converted file " + filePart.filename()));
                         }
 
                         // Store successful conversion info
                         Map<String, String> fileInfo = new HashMap<>();
                         fileInfo.put("fileName", filePart.filename());
-                        fileInfo.put("projectFilePath", projectFile.getAbsolutePath());
                         fileInfo.put("diskFilePath", diskFile.getAbsolutePath());
                         return Mono.just(fileInfo);
 
